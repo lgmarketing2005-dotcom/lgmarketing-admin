@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | LG MARKETING</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: #f9fafb;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* --- Header --- */
+    header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px 24px;
+      background: #fff;
+      border-bottom: 1px solid #d8d8d8;
+    }
+    header img {
+      height: 40px;
+      width: auto;
+      margin-right: 10px;
+    }
+    header span {
+      font-size: 18px;
+      font-style: italic;
+      font-weight: bold;
+      color: #4D4D4D;
+    }
+
+    /* --- Centered Box --- */
+    .login-box {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 320px;
+      margin: auto;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 22px;
+      font-weight: 700;
+      color: #2F2F2F;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box; /* ✅ Prevents overflow */
+    }
+    input:focus {
+      border-color: #2F2F2F;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(233,0,0,0.15);
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #2F2F2F;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #b80000;
+    }
+
+    /* --- Feedback Animations --- */
+    .feedback {
+      margin-top: 15px;
+      display: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .icon {
+      width: 40px;
+      height: 40px;
+      margin: 10px auto;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 20px;
+      animation: pop 0.3s ease-out;
+    }
+
+    .success { background: #28a745; }
+    .error { background: #dc3545; }
+
+    @keyframes pop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <img src="images/lgmarketinglogo.png" alt="LG Marketing Logo">
+    <span>LG MARKETING</span>
+  </header>
+
+  <!-- Login Box -->
+  <div class="login-box">
+    <h2>🔐 Secure Login</h2>
+    <input type="password" id="password" placeholder="Enter Password">
+    <button onclick="checkPassword()">Login</button>
+
+    <!-- Feedback Area -->
+    <div id="feedback" class="feedback"></div>
+  </div>
+
+  <script>
+    // SHA-256 hashing
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2,"0")).join("");
+    }
+
+    async function checkPassword() {
+      const entered = document.getElementById("password").value.trim();
+      const hash = await sha256(entered);
+
+      // ✅ Correct hash of "LGM2025"
+      const correctHash = "95680a4a303cbc4a7eef9ed481596a37cb39390d30c36bff28037c6b3232d6f5";
+
+      const feedback = document.getElementById("feedback");
+      feedback.style.display = "block";
+
+      if (hash === correctHash) {
+        feedback.innerHTML = `<div class="icon success">✔</div><div style="color:#28a745">Login successful!</div>`;
+        sessionStorage.setItem("loggedIn", "true");
+
+        // Redirect after short delay
+        setTimeout(() => {
+          window.location.href = "quotation.html";
+        }, 1200);
+      } else {
+        feedback.innerHTML = `<div class="icon error">✖</div><div style="color:#dc3545">Incorrect password</div>`;
+      }
+    }
+  </script>
+
+</body>
+</html>

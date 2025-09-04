@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8">
+  <title>LG Marketing Quotation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script>
+  // Simple access control: check if "loggedIn" is set
+  if (sessionStorage.getItem("loggedIn") !== "true") {
+    window.location.href = "login.html"; // redirect back if not logged in
+  }
+</script>
+
+<style>
+    body {
+    margin: 0; /* removes default space above header */
+  }
+header {
+  display: flex;
+  justify-content: center;  /* centers horizontally */
+  align-items: center;      /* centers vertically within header height */
+  padding: 12px 24px;
+  background: #fff;
+  border-bottom: 1px solid #d8d8d8;
+}
+
+  header img {
+    height: 40px;
+    width: auto;
+    display: block;
+  }
+  body {
+    font-family: 'Inter', Arial, sans-serif;
+    background: #f9fafb;
+    color: #333;
+    padding: 20px;
+  }
+
+h4 {
+  text-align: center;
+  font-size: 20px;   /* adjust as needed */
+  font-weight: 600;
+}
+
+
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 30px 0 10px;
+    color: #4D4D4D;
+  }
+
+  .form-section {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .box {
+    margin-bottom: 15px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #4D4D4D;
+  }
+
+  input, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input:focus, textarea:focus {
+    border-color: #2F2F2F;
+    box-shadow: 0 0 0 3px rgba(233,0,0,0.15);
+    outline: none;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  thead {
+    background: #2F2F2F;
+    color: #fff;
+  }
+
+  th, td {
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 14px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 13px;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  .button-group {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    padding: 10px 20px;
+    background: #2F2F2F;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  button:hover {
+    background: #b80000;
+    transform: translateY(-1px);
+  }
+
+  button:active {
+    transform: translateY(0);
+  }
+</style>
+
+</head>
+
+<body>
+ 
+<header>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <img src="images/lgmarketinglogo.png" alt="LG Marketing Logo" />
+    <span style="font-size:18px;font-style:italic;font-weight:bold;color:#4D4D4D;">
+      LG MARKETING
+    </span>
+  </div>
+</header>
+
+
+
+<h4 class="text-center text-xl font-semibold">Quotation Generator</h4>
+
+
+<div class="form-section">
+  <div class="box">
+    <label>Ref Company Code:</label>
+    <input type="text" id="refCompany" placeholder="SRM">
+  </div>
+  <div class="box">
+    <label>Ref Year & Number:</label>
+    <input type="text" id="refYearNo" placeholder="2025-001">
+  </div>
+</div>
+
+<div class="form-section">
+  <div class="box">
+    <label>Customer Name:</label>
+    <input type="text" id="customerName" placeholder="Enter customer name">
+  </div>
+  <div class="box">
+    <label>Company/Industry:</label>
+    <input type="text" id="companyName" placeholder="Company Name (if applicable)">
+  </div>
+  <div class="box">
+    <label>Address:</label>
+    <textarea id="customerAddress" placeholder="Customer address"></textarea>
+  </div>
+  <div class="box">
+    <label>Phone:</label>
+    <input type="text" id="customerPhone" placeholder="Phone number">
+  </div>
+</div>
+
+<div class="form-section">
+  <div class="box">
+    <label>Subject:</label>
+    <input type="text" id="subject" placeholder="Quotation subject">
+  </div>
+  <div class="box">
+    <label>Terms & Conditions:</label>
+    <textarea id="terms" placeholder="Enter terms & conditions"></textarea>
+  </div>
+</div>
+
+<h3>Products</h3>
+<table id="productTable">
+  <thead>
+    <tr>
+      <th>S.No</th>
+      <th>Product Name</th>
+      <th>Description</th>
+      <th>Unit Price</th>
+      <th>Qty</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div class="button-group">
+  <button onclick="addRow()">➕ Add Product</button>
+  <button onclick="generatePDF()">📄 Generate PDF</button>
+</div>
+
+  <script>
+    let rowCount = 0;
+    let refCounter = 1;
+
+    function addRow() {
+      rowCount++;
+      const table = document.getElementById("productTable").querySelector("tbody");
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${rowCount}</td>
+        <td><input type="text" class="pname"></td>
+        <td><input type="text" class="pdesc"></td>
+        <td><input type="number" class="prate" oninput="updateTotal(this)"></td>
+        <td><input type="number" class="pqty" oninput="updateTotal(this)"></td>
+        <td class="ptotal">0</td>
+      `;
+      table.appendChild(row);
+    }
+
+    function updateTotal(el) {
+      const row = el.parentElement.parentElement;
+      const qty = row.querySelector(".pqty").value || 0;
+      const rate = row.querySelector(".prate").value || 0;
+      row.querySelector(".ptotal").innerText = (qty * rate).toFixed(2);
+    }
+
+async function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const pageHeight = doc.internal.pageSize.height;
+  const bottomMargin = 30; // space for footer
+  let y = 65;
+
+  // ✅ Logo 
+  const logo = await toBase64("images/logoq.png"); 
+  doc.addImage(logo, "png", 20, 10, 22, 22); 
+  
+  // ✅ LG MARKETING Title 
+  doc.setFont("helvetica", "bold"); 
+  doc.setTextColor(89, 39, 115); 
+  doc.setFontSize(32); 
+  doc.text("L.G.", 110, 22, { align: "center" }); 
+  doc.text("MARKETING", 110, 35, { align: "center" }); 
+  
+  // Grey Line 
+  doc.setDrawColor(150, 150, 150); 
+  doc.line(10, 38, 200, 38);
+  
+  // ✅ Grey Tagline
+  doc.setFontSize(9.5); 
+  doc.setFont("helvetica", "normal"); 
+  doc.setTextColor(130, 130, 130); 
+  doc.text("Authorized Sales & Service Partner : Home UPS, Online UPS, Invertors, Automotive & Industrial Batteries, Servo Stabilizer,", 105, 42, { align: "center" }); 
+  doc.text("Isolation Transformer, Solar Ongrid & Offgrid Projects, Solar Pump Irrigation, LED Lighting for Industries, APFC Panel Board,", 105, 46, { align: "center" }); 
+  doc.text("Harmonic Filter, Distribution Transformers, Also we undertake All Kinds of Electrical Projects.", 105, 50, { align: "center" }); 
+  doc.setTextColor(0, 0, 0);
+ 
+// --- REF NO + Date on same line ---
+doc.setFontSize(10);
+
+// REF NO (left)
+doc.setFont("helvetica", "bold");
+doc.text("REF NO:", 14, y);
+doc.setFont("helvetica", "normal");
+doc.text(`LGM/${refCompany}/${refYearNo}`, 40, y);
+
+// Date (right)
+const today = new Date();
+const dateStr = today.toLocaleDateString("en-GB"); // DD/MM/YYYY
+doc.setFont("helvetica", "bold");
+doc.text("Date:", 160, y);
+doc.setFont("helvetica", "normal");
+doc.text(dateStr, 175, y);
+
+y += 10; // move down only after printing both
+
+
+  // --- Customer Block ---
+  const customer = document.getElementById("customerName").value;
+  const company = document.getElementById("companyName").value;
+  const address = document.getElementById("customerAddress").value;
+  const phone = document.getElementById("customerPhone").value;
+
+  doc.setFont("helvetica", "bold");
+  doc.text("To:", 14, y);
+  y += 6;
+  if(customer){ doc.text(customer, 20, y); y+=6; }
+  if(company){ doc.text(company, 20, y); y+=6; }
+  doc.setFont("helvetica","normal");
+  if(address){ doc.text(address, 20, y); y+=6; }
+  if(phone){ doc.text("Ph: "+phone, 20, y); y+=6; }
+
+  // --- Subject ---
+  y += 4;
+  const subject = document.getElementById("subject").value;
+  doc.setFont("helvetica","bold");
+  doc.text("Subject:", 14, y);
+  doc.setFont("helvetica","normal");
+  doc.text(subject, 35, y);
+  y+=10;
+
+  // --- Dear Sir ---
+  doc.setFont("helvetica","bold");
+  doc.text("Dear Sir,", 14, y);
+  doc.setFont("helvetica","normal");
+  doc.text("We are pleased to submit our quotation as below:", 14, y+6);
+  y+=12;
+
+  // --- Product Table ---
+  const rows = [];
+  let grandTotal = 0;
+  document.querySelectorAll("#productTable tbody tr").forEach((row,i)=>{
+    const pname = row.querySelector(".pname").value;
+    const pdesc = row.querySelector(".pdesc").value;
+    const rate = row.querySelector(".prate").value;
+    const qty = row.querySelector(".pqty").value;
+    const total = row.querySelector(".ptotal").innerText;
+    grandTotal += parseFloat(total);
+    rows.push([i+1, pname, pdesc, rate, qty, total]);
+  });
+  rows.push([
+    { content:"Grand Total", colSpan:5, styles:{halign:"right", fontStyle:"bold"} },
+    { content:grandTotal.toFixed(2), styles:{halign:"center"} }
+  ]);
+
+  // Split table automatically if it reaches footer
+doc.autoTable({
+  head:[["S.No","Product Name","Description","Unit Price","Qty","Total"]],
+  body:rows,
+  startY:y,
+  theme:"grid",
+  headStyles:{ fillColor:[89,39,115], textColor:[255,255,255], halign:"center" },
+  bodyStyles:{ halign:"center", valign:"top" },
+  styles:{ fontSize:9 },
+  columnStyles: {
+    0: { cellWidth: 10 },
+    1: { cellWidth: 40 },
+    2: { cellWidth: 70, overflow: 'linebreak' }, // wraps description
+    3: { cellWidth: 25 },
+    4: { cellWidth: 20 },
+    5: { cellWidth: 20 }
+  },
+  margin: { top: 65, bottom: bottomMargin }, // reserve space for header/footer
+  didDrawPage: function (data) {
+    // --- Header (logo + LG MARKETING) ---
+    doc.setFontSize(32);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(89, 39, 115);
+    doc.text("L.G.", 110, 22, { align: "center" });
+    doc.text("MARKETING", 110, 35, { align: "center" });
+    doc.setDrawColor(150, 150, 150);
+    doc.line(10, 38, 200, 38);
+    doc.setFontSize(9.5);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(130, 130, 130);
+    doc.text("Authorized Sales & Service Partner : Home UPS, Online UPS, Invertors, Automotive & Industrial Batteries, Servo Stabilizer,", 105, 42, { align: "center" });
+    doc.text("Isolation Transformer, Solar Ongrid & Offgrid Projects, Solar Pump Irrigation, LED Lighting for Industries, APFC Panel Board,", 105, 46, { align: "center" });
+    doc.text("Harmonic Filter, Distribution Transformers, Also we undertake All Kinds of Electrical Projects.", 105, 50, { align: "center" });
+
+    // --- Footer ---
+    doc.setDrawColor(150,150,150);
+    doc.line(10,280,200,280);
+    doc.setFontSize(8.5);
+    doc.setFont("helvetica","bold");
+    doc.setTextColor(130,130,130);
+    doc.text("No. 48E1, SF.No. 647/1A2, CS Tower, Near ASTC Depot Circle & Margam Mariamman Temple, Bangalore Bye-Pass Road, Hosur - 635 109.", 105, 284, {align:"center"});
+    doc.text("Phone : 04344 - 243278   E-mail : lgmarketing2005@gmail.com, info@lgmarketing.in   www.lgmarketing.in", 105, 288, {align:"center"});
+  }
+});
+
+
+  let finalY = doc.lastAutoTable.finalY + 10;
+
+  // --- Terms & Conditions Block ---
+  const terms = document.getElementById("terms").value;
+  if(terms){
+    const wrappedTerms = doc.splitTextToSize(terms, 180);
+    // Check if adding this block exceeds page bottom
+    if(finalY + wrappedTerms.length*5 + 20 > pageHeight - bottomMargin){
+      doc.addPage();
+      finalY = 20;
+    }
+    doc.setFont("helvetica","bold");
+    doc.text("Terms & Conditions:", 14, finalY);
+    finalY+=6;
+    doc.setFont("helvetica","normal");
+    doc.text(wrappedTerms, 14, finalY);
+    finalY += wrappedTerms.length*5 + 10;
+  }
+
+  // --- Thanking You / Signature Block ---
+  const blockHeight = 10 + 20 + 6 + 6; // approx height for "Thanking you + signature + name + phone"
+  if(finalY + blockHeight > pageHeight - bottomMargin){
+    doc.addPage();
+    finalY = 20;
+  }
+
+  doc.setFont("helvetica","bold");
+  doc.text("Thanking you,", 14, finalY); finalY+=10;
+  doc.text("For L.G. Marketing", 14, finalY); finalY+=5;
+
+  // Digital Signature
+  try{
+    const ds = await toBase64("images/ds.png");
+    doc.addImage(ds,"png",14,finalY,40,15);
+    finalY += 20;
+  }catch(e){
+    console.error("Signature image not found",e);
+  }
+
+  doc.text("Ln. G.SIVASUBRAMANIAN.B.E.,M.B.A.", 14, finalY); finalY+=6;
+  doc.text("9894765839", 14, finalY); finalY+=6;
+
+  // --- Footer ---
+  doc.setDrawColor(150,150,150);
+  doc.line(10,280,200,280);
+  doc.setFontSize(8.5);
+  doc.setFont("helvetica","bold");
+  doc.setTextColor(130,130,130);
+  doc.text("No. 48E1, SF.No. 647/1A2, CS Tower, Near ASTC Depot Circle & Margam Mariamman Temple, Bangalore Bye-Pass Road, Hosur - 635 109.", 105, 284, {align:"center"});
+  doc.text("Phone : 04344 - 243278   E-mail : lgmarketing2005@gmail.com, info@lgmarketing.in   www.lgmarketing.in", 105, 288, {align:"center"});
+
+  // Save PDF
+  doc.save("quotation.pdf");
+}
+
+
+
+    function toBase64(url) {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function() {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(xhr.response);
+        };
+        xhr.onerror = reject;
+        xhr.open("GET", url);
+        xhr.responseType = "blob";
+        xhr.send();
+      });
+    }
+  </script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>
